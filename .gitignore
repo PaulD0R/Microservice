@@ -1,0 +1,86 @@
+# Visual Studio
+.vs/
+bin/
+obj/
+*.csproj.user
+packages/
+*.user
+*.suo
+*.cache
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.db
+_ReSharper.*/
+*.VC.db
+*.[Cc]ache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+
+# Rider/IntelliJ IDEA
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+ehthumbs.db
+
+# Build results
+[Bb]in/
+[Oo]bj/
+*.exe
+*.dll
+*.pdb
+*.winmd
+*.ipdb
+*.iobj
+
+# NuGet
+[Nn]u[Bb]uild/
+*.nupkg
+packages/
+.nuget/
+nuget.exe
+
+# Logs
+*.log
+*.tlog
+_ReSharper.*
+*.bak
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+
+# Visual Studio database projects
+*.dbmdl
+*.dbproj
+
+# Azure functions
+.local.settings.json
+
+# Backup files
+*.backup
+*.gho
+*.ori
+*.orig
+
+# Visual Studio code coverage
+.coverage
+coverage.xml
+
+# Node.js
+node_modules/
+npm-debug.log
