@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using UserService.API.Exceptions;
 using UserService.Application.Interfaces.Cachings;
+using UserService.Application.Interfaces.Factory;
 using UserService.Application.Interfaces.Messages;
 using UserService.Application.Interfaces.Repositories;
 using UserService.Application.Interfaces.Services;
@@ -14,6 +15,7 @@ using UserService.Domain.Data;
 using UserService.Domain.Entities;
 using UserService.Infrastructure.Caching;
 using UserService.Infrastructure.Core;
+using UserService.Infrastructure.Factory;
 using UserService.Infrastructure.Kafka;
 using UserService.Infrastructure.Repositories;
 using AuthenticationService = UserService.Application.Services.AuthenticationService;
@@ -24,6 +26,11 @@ public static class ProgramExtension
 {
     extension(IServiceCollection service)
     {
+        public void AddFactories()
+        {
+            service.AddTransient<ILikeServiceFactory, LikeServiceFactory>();
+        }
+        
         public void AddProducer<TMessage>(IConfigurationSection configuration)
         {
             service.Configure<KafkaSettings>(configuration);
@@ -110,6 +117,7 @@ public static class ProgramExtension
 
         public void AddServices()
         {
+            service.AddScoped<ILikeService, LikeService>();
             service.AddScoped<IAuthenticationService, AuthenticationService>();
             service.AddScoped<IPersonService, PersonService>();
             service.AddScoped<ITokenService, TokenService>();

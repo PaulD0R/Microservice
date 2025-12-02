@@ -10,10 +10,12 @@ builder.Services.AddExceptionsHandlers();
 builder.Services.AddPersonAuthentication();
 builder.Services.AddCaching();
 builder.Services.AddRepositories();
+builder.Services.AddServices();
+builder.Services.AddFactories();
 builder.Services.AddProducer<PersonDto>(builder.Configuration.GetRequiredSection("Kafka:PersonCreated"));
 builder.Services.AddConsumer<LikeEvent, LikeHandler>(builder.Configuration.GetRequiredSection("Kafka:LikeEvent"));
-builder.Services.AddServices();
 builder.Services.AddPersonCors();
+builder.Services.AddResponseCompression();
 
 
 var app = builder.Build();
