@@ -12,6 +12,7 @@ using UserService.Application.Interfaces.Services;
 using UserService.Application.Services;
 using UserService.Domain.Data;
 using UserService.Domain.Entities;
+using UserService.Infrastructure.Caching;
 using UserService.Infrastructure.Core;
 using UserService.Infrastructure.Kafka;
 using UserService.Infrastructure.Repositories;
@@ -21,109 +22,126 @@ namespace UserService.API.Extensions;
 
 public static class ProgramExtension
 {
-    public static void AddProducer<TMessage>(this IServiceCollection service, IConfigurationSection configuration)
+    extension(IServiceCollection service)
     {
-        service.Configure<KafkaSettings>(configuration);
-        service.AddSingleton<IMessageProducer<TMessage>, KafkaMessageProducer<TMessage>>();
-    }
-
-    public static void AddConsumer<TMessage, THandler>
-        (this IServiceCollection service, IConfigurationSection configuration)
-    where THandler : class, IMessageHandler<TMessage>
-    {
-        service.Configure<KafkaSettings>(configuration);
-        service.AddHostedService<KafkaConsumer<TMessage>>();
-        service.AddScoped<IMessageHandler<TMessage>, THandler>();
-    }
-
-    public static void AddDataBasses(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Psql")));
-        services.AddStackExchangeRedisCache(options =>
+        public void AddProducer<TMessage>(IConfigurationSection configuration)
         {
-            options.Configuration = configuration.GetConnectionString("Redis");
-            options.InstanceName = "micro_user";
-        });
-        services.AddScoped<IDatabase>(options =>
-            options.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
-    }
+            service.Configure<KafkaSettings>(configuration);
+            service.AddSingleton<IMessageProducer<TMessage>, KafkaMessageProducer<TMessage>>();
+        }
 
-    public static void AddAuthentication(this IServiceCollection services)
-    {
-        services.AddIdentity<Person, IdentityRole>( options =>
+        public void AddConsumer<TMessage, THandler>
+            (IConfigurationSection configuration)
+            where THandler : class, IMessageHandler<TMessage>
+        {
+            service.Configure<KafkaSettings>(configuration);
+            service.AddHostedService<KafkaConsumer<TMessage>>();
+            service.AddSingleton<IMessageHandler<TMessage>, THandler>();
+        }
+
+        public void AddDataBasses(IConfiguration configuration)
         {   
-            options.Password.RequireDigit = true;
-            options.Password.RequireNonAlphanumeric = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
-            options.Password.RequiredLength = 8;
-        }).AddEntityFrameworkStores<ApplicationDbContext>();
-        services.AddAuthentication( options =>
-        {
-            options.DefaultAuthenticateScheme =
-                options.DefaultChallengeScheme =
-                    options.DefaultForbidScheme =
-                        options.DefaultScheme =
-                            options.DefaultSignInScheme =
-                                options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters()
+            service.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("Psql")));
+            service.AddStackExchangeRedisCache(options =>
             {
-                ValidateIssuer = true,
-                ValidIssuer = StaticData.ISSURE,
-                ValidateAudience = true,
-                ValidAudience = StaticData.AUDIENCE,
-                ValidateLifetime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(StaticData.KEY)),
-                ValidateIssuerSigningKey = true
-            };
-        });
-        services.AddAuthorization().AddControllers();
-    }
-
-    public static void AddRepositories(this IServiceCollection services)
-    {
-        services.AddScoped<IPersonRepository, PersonRepository>();
-        services.AddScoped<ILikeRepository, LikeRepository>();
-        services.AddScoped<IJwtRepository, JwtRepository>();
-        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-    }
-
-    public static void AddCaching(this IServiceCollection services)
-    {
-        services.AddScoped<IHashCachingService, IHashCachingService>();
-    }
-
-    public static void AddServices(this IServiceCollection services)
-    {
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<IPersonService, PersonService>();
-        services.AddScoped<ITokenService, TokenService>();
-    }
-
-    public static void AddExceptionsHandlers(this IServiceCollection services)
-    {
-        services.AddControllers().ConfigureApiBehaviorOptions(options =>
-        {
-            options.SuppressModelStateInvalidFilter = true;
-        });
-        services.AddProblemDetails();
-        services.AddExceptionHandler<ExceptionHandler>();
-    }
-
-    public static void AddPersonCors(this IServiceCollection services)
-    {
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAll", policy =>
-            {
-                policy.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .WithExposedHeaders("Authorization");
+                options.Configuration = configuration.GetConnectionString("Redis");
+                options.InstanceName = "micro_user";
             });
-        });
+            service.AddScoped<IDatabase>(options =>
+                options.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
+        }
+
+        public void AddPersonAuthentication()
+        {
+            service.AddIdentity<Person, IdentityRole>( options =>
+            {   
+                options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 8;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            service.AddAuthentication( options =>
+            {
+                options.DefaultAuthenticateScheme =
+                    options.DefaultChallengeScheme =
+                        options.DefaultForbidScheme =
+                            options.DefaultScheme =
+                                options.DefaultSignInScheme =
+                                    options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = StaticData.ISSUER,
+                    ValidateAudience = true,
+                    ValidAudience = StaticData.AUDIENCE,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(StaticData.KEY)),
+                    ValidateIssuerSigningKey = true
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies["jwt"];
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+            service.AddAuthorization().AddControllers();
+        }
+
+        public void AddRepositories()
+        {
+            service.AddScoped<IPersonRepository, PersonRepository>();
+            service.AddScoped<ILikeRepository, LikeRepository>();
+            service.AddScoped<IJwtRepository, JwtRepository>();
+            service.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        }
+
+        public void AddCaching()
+        {
+            service.AddScoped<IHashCachingService, HashCachingService>();
+        }
+
+        public void AddServices()
+        {
+            service.AddScoped<IAuthenticationService, AuthenticationService>();
+            service.AddScoped<IPersonService, PersonService>();
+            service.AddScoped<ITokenService, TokenService>();
+        }
+
+        public void AddExceptionsHandlers()
+        {
+            service.AddControllers().ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+            service.AddProblemDetails();
+            service.AddExceptionHandler<ExceptionHandler>();
+        }
+
+        public void AddPersonCors()
+        {
+            service.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .WithExposedHeaders("Authorization");
+                });
+            });
+        }
+
+        public void AddHelthCheck()
+        {
+            //services.AddHealthChecks().AddInMemoryStorage();
+        }
     }
 }

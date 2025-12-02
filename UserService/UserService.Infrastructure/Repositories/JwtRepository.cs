@@ -22,7 +22,7 @@ public class JwtRepository(UserManager<Person> userManager) : IJwtRepository
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var jwt = new JwtSecurityToken(
-            issuer: StaticData.ISSURE,
+            issuer: StaticData.ISSUER,
             audience: StaticData.AUDIENCE,
             claims: claims,
             expires: DateTime.Now.AddMinutes(10),

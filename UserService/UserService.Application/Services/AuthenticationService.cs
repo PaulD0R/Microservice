@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using UserService.Application.Interfaces.Messages;
 using UserService.Application.Interfaces.Repositories;
@@ -16,7 +17,8 @@ public class AuthenticationService(
     IRefreshTokenRepository refreshTokenRepository,
     IMessageProducer<PersonDto>  messageProducer,
     UserManager<Person> userManager,
-    SignInManager<Person> signInManager)
+    SignInManager<Person> signInManager,
+    IHttpContextAccessor  httpContextAccessor)
     : IAuthenticationService
 {
     public async Task<TokensDto> SigninAsync(SigninRequest signinRequest)
@@ -30,6 +32,9 @@ public class AuthenticationService(
         var token = await jwtRepository.CreateJwtAsync(person);
         var refreshToken = await refreshTokenRepository.CreateNewRefreshTokenAsync(person);
 
+        var httpContext = httpContextAccessor.HttpContext;
+        httpContext.Response.Cookies.Append("jwt", token);
+        
         return new TokensDto
         {
             Jwt = token,
@@ -54,6 +59,9 @@ public class AuthenticationService(
 
         await messageProducer.ProduceAsync(person.ToPersonDto());
 
+        var httpContext = httpContextAccessor.HttpContext;
+        httpContext.Response.Cookies.Append("jwt", token);
+        
         return new TokensDto 
         {
             Jwt = token,
