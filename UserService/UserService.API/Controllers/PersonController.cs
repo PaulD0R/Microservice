@@ -7,7 +7,7 @@ namespace UserService.API.Controllers;
 
 [ApiController]
     [Authorize]
-    [Route("WPF/Persons")]
+    [Route("user-service/persons")]
     public class PersonController(IPersonService  personService) : ControllerBase
     {
         [HttpGet("Id/{id}")]
@@ -16,13 +16,13 @@ namespace UserService.API.Controllers;
             return Ok(await personService.GetByIdAsync(id));
         }
 
-        [HttpGet("Name/{name}")]
+        [HttpGet("name/{name}")]
         public async Task<ActionResult> GetByName([FromRoute] string name)
         {
             return Ok(await personService.GetByNameAsync(name));
         }
 
-        [HttpGet("Me")]
+        [HttpGet("me")]
         public async Task<IActionResult> GetPrivatePerson()
         {
             var personId = User.GetId();
