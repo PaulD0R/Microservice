@@ -8,31 +8,31 @@ using UserService.Application.Models.Token;
 namespace UserService.API.Controllers;
 
 [ApiController]
-[Route("WPF/Authentication")]
+[Route("user-service/authentication")]
 public class AuthenticationController(
     IAuthenticationService authenticationService,
     ITokenService tokenService)
     : ControllerBase
 {
-    [HttpPost("Signin")]
+    [HttpPost("signin")]
     public async Task<IActionResult> Signin([FromBody] SigninRequest signinRequest)
     {
         return Ok(await authenticationService.SigninAsync(signinRequest));
     }
 
-    [HttpPost("Signup")]
+    [HttpPost("signup")]
     public async Task<IActionResult> Signup([FromBody] SignupRequest newPersonRequest)
     {
         return Ok(await authenticationService.SignupAsync(newPersonRequest));
     }
 
-    [HttpPost("RefreshToken")]
+    [HttpPost("refreshToken")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         return Ok(await tokenService.RefreshTokenAsync(request));
     }
 
-    [HttpDelete("Logout")]
+    [HttpDelete("logout")]
     [Authorize]
     public async Task<IActionResult> Logout()
     {

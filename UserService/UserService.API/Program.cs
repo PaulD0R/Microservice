@@ -7,12 +7,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDataBasses(builder.Configuration);
 builder.Services.AddExceptionsHandlers();
+builder.Services.AddPersonAuthentication();
 builder.Services.AddCaching();
 builder.Services.AddRepositories();
+builder.Services.AddServices();
+builder.Services.AddFactories();
 builder.Services.AddProducer<PersonDto>(builder.Configuration.GetRequiredSection("Kafka:PersonCreated"));
 builder.Services.AddConsumer<LikeEvent, LikeHandler>(builder.Configuration.GetRequiredSection("Kafka:LikeEvent"));
-builder.Services.AddServices();
 builder.Services.AddPersonCors();
+builder.Services.AddResponseCompression();
+
 
 var app = builder.Build();
 
@@ -39,6 +43,6 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers(); 
 
 app.Run();
