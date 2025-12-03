@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using UserService.Application.Interfaces.Messages;
 using UserService.Application.Interfaces.Repositories;
 using UserService.Application.Interfaces.Services;
@@ -18,7 +19,8 @@ public class AuthenticationService(
     IMessageProducer<PersonDto>  messageProducer,
     UserManager<Person> userManager,
     SignInManager<Person> signInManager,
-    IHttpContextAccessor  httpContextAccessor)
+    IHttpContextAccessor  httpContextAccessor,
+    ILogger<AuthenticationService> logger)
     : IAuthenticationService
 {
     public async Task<TokensDto> SigninAsync(SigninRequest signinRequest)
@@ -49,18 +51,22 @@ public class AuthenticationService(
 
         if (!createPerson.Succeeded)
             throw new UsernameAlreadyExistsException(person.UserName!);
-            
+        logger.LogInformation($"Person {person.UserName} registered successfully");    
+        
         var roleResult = await userManager.AddToRoleAsync(person, "User");
         if (!roleResult.Succeeded)
             throw new Exception("failed to issue license");
 
         var token = await jwtRepository.CreateJwtAsync(person);
         var refreshToken = await refreshTokenRepository.CreateNewRefreshTokenAsync(person);
+        logger.LogInformation($"Tokens was created successfully");
 
-        await messageProducer.ProduceAsync(person.ToPersonDto());
+        // await messageProducer.ProduceAsync(person.ToPersonDto());
+        // logger.LogInformation($"Kafka is working successfully");
 
         var httpContext = httpContextAccessor.HttpContext;
         httpContext.Response.Cookies.Append("jwt", token);
+        logger.LogInformation($"Cookies was created successfully");
         
         return new TokensDto 
         {

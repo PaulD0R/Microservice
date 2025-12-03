@@ -9,7 +9,7 @@ namespace UserService.Application.Services;
 
 public class PersonService(
     IPersonRepository personRepository,
-    IHashCachingService  cachingService)
+    IHashCachingService cachingService)
     : IPersonService
 {
     public async Task<PersonDto> GetByIdAsync(string id)

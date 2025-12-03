@@ -50,11 +50,14 @@ public static class ProgramExtension
         {   
             service.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("Psql")));
+            
             service.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = configuration.GetConnectionString("Redis");
                 options.InstanceName = "micro_user";
             });
+            service.AddSingleton<IConnectionMultiplexer>(sp => 
+                ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")));
             service.AddScoped<IDatabase>(options =>
                 options.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
         }
