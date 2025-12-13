@@ -7,16 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Interfaces\Factories\" />
-      <Folder Include="Interfaces\Messages\" />
-      <Folder Include="Interfaces\Repositories\" />
-      <Folder Include="Interfaces\Services\" />
-      <Folder Include="Mappers\" />
-      <Folder Include="Models\" />
-      <Folder Include="Services\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\HotelService.Domain\HotelService.Domain.csproj" />
     </ItemGroup>
 

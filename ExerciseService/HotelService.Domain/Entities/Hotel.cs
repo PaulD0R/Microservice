@@ -8,6 +8,8 @@ public class Hotel
     public string City { get; set; } = null!;
     public byte Stars { get; set; }
     public string Description { get; set; } = null!;
+    public decimal RealRating { get; set; } = 0;
+    public decimal ShownRating { get; set; } = 0;
     
     public IEnumerable<HotelPhoto> Photos { get; set; } = [];
     public IEnumerable<HotelRoom> Rooms { get; set; } = [];
