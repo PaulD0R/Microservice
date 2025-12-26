@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelService.Application.Models.HotelRooms;
 
 public record PatchHotelRoomRequest(  

@@ -8,6 +8,7 @@ using UserService.Application.Mappers;
 using UserService.Application.Models.Person;
 using UserService.Application.Models.Token;
 using UserService.Domain.Entities;
+using UserService.Domain.Events;
 using UserService.Domain.Exceptions;
 
 namespace UserService.Application.Services;
@@ -16,7 +17,7 @@ public class AuthenticationService(
     IPersonRepository personRepository,
     IJwtRepository jwtRepository,
     IRefreshTokenRepository refreshTokenRepository,
-    IMessageProducer<PersonDto>  messageProducer,
+    IMessageProducer<PersonCreateEvent> messageProducer,
     UserManager<Person> userManager,
     SignInManager<Person> signInManager,
     IHttpContextAccessor  httpContextAccessor,
@@ -61,8 +62,8 @@ public class AuthenticationService(
         var refreshToken = await refreshTokenRepository.CreateNewRefreshTokenAsync(person);
         logger.LogInformation($"Tokens was created successfully");
 
-        // await messageProducer.ProduceAsync(person.ToPersonDto());
-        // logger.LogInformation($"Kafka is working successfully");
+        await messageProducer.ProduceAsync(person.ToPersonCreateEvent());
+        logger.LogInformation($"Kafka is working successfully");
 
         var httpContext = httpContextAccessor.HttpContext;
         httpContext.Response.Cookies.Append("jwt", token);

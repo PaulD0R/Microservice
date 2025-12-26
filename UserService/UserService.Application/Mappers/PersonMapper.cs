@@ -1,5 +1,6 @@
 using UserService.Application.Models.Person;
 using UserService.Domain.Entities;
+using UserService.Domain.Events;
 
 namespace UserService.Application.Mappers;
 
@@ -13,22 +14,51 @@ public static class PersonMapper
             };
         }
 
-        public static PersonDto ToPersonDto(this Person person)
+        extension(Person person)
         {
-            return new PersonDto
+            public PersonDto ToPersonDto()
             {
-                Id = person.Id,
-                Name = person.UserName ??  string.Empty
-            };
-        }
+                return new PersonDto
+                {
+                    Id = person.Id,
+                    Name = person.UserName ??  string.Empty
+                };
+            }
 
-        public static PrivatePersonDto ToPrivatePersonDto(this Person person)
-        {
-            return new PrivatePersonDto
+            public PrivatePersonDto ToPrivatePersonDto()
             {
-                Id = person.Id,
-                Name = person.UserName ??  string.Empty,
-                Email = person.Email ??  string.Empty
-            };
+                return new PrivatePersonDto
+                {
+                    Id = person.Id,
+                    Name = person.UserName ??  string.Empty,
+                    Email = person.Email ??  string.Empty
+                };
+            }
+
+            public PersonCreateEvent ToPersonCreateEvent()
+            {
+                return new PersonCreateEvent
+                {
+                    PersonId = person.Id,
+                    Name = person.UserName ?? string.Empty
+                };
+            }
+            
+            public PersonDeleteEvent ToPersonDeleteEvent()
+            {
+                return new PersonDeleteEvent
+                {
+                    PersonId = person.Id
+                };
+            }
+            
+            public PersonUpdateEvent ToPersonUpdateEvent()
+            {
+                return new PersonUpdateEvent
+                {
+                    PersonId = person.Id,
+                    NewName = person.UserName ?? string.Empty
+                };
+            }
         }
     }

@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelService.Application.Models.HotelRating;
 
 public record HotelRatingRequest(
-    byte Value);
+    [Required] byte Value);

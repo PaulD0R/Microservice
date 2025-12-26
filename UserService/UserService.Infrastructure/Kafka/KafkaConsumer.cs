@@ -11,7 +11,7 @@ public class KafkaConsumer<TMessage> : BackgroundService
     private readonly IConsumer<string, TMessage> _consumer;
     private readonly IMessageHandler<TMessage> _handler;
     
-    public KafkaConsumer(IOptions<KafkaSettings> options, IMessageHandler<TMessage> handler)
+    public KafkaConsumer(IOptions<KafkaConsumerSettings> options, IMessageHandler<TMessage> handler)
     {
         var config = new ConsumerConfig
         {

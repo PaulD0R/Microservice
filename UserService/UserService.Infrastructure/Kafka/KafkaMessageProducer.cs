@@ -9,7 +9,7 @@ public class KafkaMessageProducer<TMessage> : IMessageProducer<TMessage>
     private readonly IProducer<string, TMessage> _producer;
     private readonly string _topic;
 
-    public KafkaMessageProducer(IOptions<KafkaSettings> options)
+    public KafkaMessageProducer(IOptions<KafkaProducerSettings> options)
     {
         var config = new ProducerConfig
         {

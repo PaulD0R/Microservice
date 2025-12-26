@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelService.Application.Models.RoomStates;
 
 public record AddRoomStateRequest(
-    DateOnly StartDate,
-    DateOnly EndDate);
+    [Required] DateOnly StartDate,
+    [Required] DateOnly EndDate);

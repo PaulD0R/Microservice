@@ -33,7 +33,7 @@ public static class ProgramExtension
         
         public void AddProducer<TMessage>(IConfigurationSection configuration)
         {
-            service.Configure<KafkaSettings>(configuration);
+            service.Configure<KafkaProducerSettings>(configuration);
             service.AddSingleton<IMessageProducer<TMessage>, KafkaMessageProducer<TMessage>>();
         }
 
@@ -41,7 +41,7 @@ public static class ProgramExtension
             (IConfigurationSection configuration)
             where THandler : class, IMessageHandler<TMessage>
         {
-            service.Configure<KafkaSettings>(configuration);
+            service.Configure<KafkaConsumerSettings>(configuration);
             service.AddHostedService<KafkaConsumer<TMessage>>();
             service.AddSingleton<IMessageHandler<TMessage>, THandler>();
         }

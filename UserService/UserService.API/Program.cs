@@ -12,7 +12,7 @@ builder.Services.AddCaching();
 builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddFactories();
-builder.Services.AddProducer<PersonDto>(builder.Configuration.GetRequiredSection("Kafka:PersonCreated"));
+builder.Services.AddProducer<PersonCreateEvent>(builder.Configuration.GetRequiredSection("Kafka:PersonCreated"));
 builder.Services.AddConsumer<LikeEvent, LikeHandler>(builder.Configuration.GetRequiredSection("Kafka:LikeEvent"));
 builder.Services.AddPersonCors();
 builder.Services.AddResponseCompression();

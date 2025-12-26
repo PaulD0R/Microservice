@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelService.Application.Models.Hotels;
 
 public record AddHotelRequest(
-    string Name,
-    string Country,
-    string City,
-    byte Stars,
-    string Description);
+    [Required] string Name,
+    [Required] string Country,
+    [Required] string City,
+    [Required] byte Stars,
+    [Required] string Description);

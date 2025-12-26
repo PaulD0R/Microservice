@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelService.Application.Models.HotelPhotos;
 
 public record AddHotelPhotoRequest(
-    string Name, 
+    [Required] string Name,
     string Type
 );

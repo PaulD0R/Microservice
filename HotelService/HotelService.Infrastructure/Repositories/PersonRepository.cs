@@ -28,9 +28,9 @@ public class PersonRepository(
         return rows > 0;
     }
 
-    public async Task<bool> UpdateNameAsync(string name, CancellationToken ct)
+    public async Task<bool> UpdateNameAsync(string id, string name, CancellationToken ct)
     {
-        var person = await context.Persons.FirstOrDefaultAsync(p => p.Id == name, ct);
+        var person = await context.Persons.FirstOrDefaultAsync(p => p.Id == id, ct);
         if (person == null) return false;
         
         person.Name = name;

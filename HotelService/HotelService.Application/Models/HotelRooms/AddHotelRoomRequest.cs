@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelService.Application.Models.HotelRooms;
 
 public record AddHotelRoomRequest(
-    Guid HotelId,
-    byte NumberOfResidents,
-    string Description);
+    [Required] Guid HotelId,
+    [Required] byte NumberOfResidents,
+    [Required] string Description);

@@ -9,7 +9,7 @@ public class LikeEvent
 }
 
 public enum LikeAction
-{
+{   
     Like = 1,
     Unlike = 0
 }

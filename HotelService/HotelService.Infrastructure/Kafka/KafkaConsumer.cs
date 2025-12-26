@@ -2,20 +2,24 @@ using Confluent.Kafka;
 using HotelService.Application.Interfaces.Messages;
 using HotelService.Infrastructure.Options;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace HotelService.Infrastructure.Kafka;
 
 public class KafkaConsumer<TMessage> : BackgroundService
 {
-    private readonly string _topic; 
     private readonly IConsumer<string, TMessage> _consumer;
     private readonly IMessageHandler<TMessage> _handler;
+    private ILogger<KafkaConsumer<TMessage>> _logger;
 
-    public KafkaConsumer(IOptions<KafkaOptions> kafkaOptions, IMessageHandler<TMessage> handler)
+    public KafkaConsumer(
+        IOptions<KafkaOptions> kafkaOptions, 
+        IMessageHandler<TMessage> handler,  
+        ILogger<KafkaConsumer<TMessage>> logger)
     {
+        _logger = logger;
         _handler = handler;
-        _topic = kafkaOptions.Value.Topic;
         
         var config = new ConsumerConfig
         {
@@ -25,6 +29,7 @@ public class KafkaConsumer<TMessage> : BackgroundService
         };
         _consumer = new ConsumerBuilder<string, TMessage>(config)
             .SetValueDeserializer(new KafkaDeserializer<TMessage>()).Build();
+        _consumer.Subscribe(kafkaOptions.Value.Topic);
     }
     
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,17 +39,24 @@ public class KafkaConsumer<TMessage> : BackgroundService
 
     private async Task? ConsumeAsync(CancellationToken stoppingToken)
     {
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
+
                 var result = _consumer.Consume(stoppingToken);
                 await _handler.HandleAsync(result.Message.Value, stoppingToken);
             }
+            catch(Exception ex)
+            {
+                _logger.LogError("Consume error: {ExMessage}", ex.Message);
+            }
         }
-        catch
-        {
-            //
-        }
+        _logger.LogError("Consume error: {StoppingTokenIsCancellationRequested}", stoppingToken.IsCancellationRequested);
+    }
+    
+    public override Task StopAsync(CancellationToken cancellationToken) {
+        _consumer.Close();
+        return base.StopAsync(cancellationToken);
     }
 }

@@ -25,7 +25,7 @@ public class HotelRatingService(
         if (rating != null) return (decimal)rating;
         
         var ratings = await hotelRatingRepository.GetByHotelIdAsync(hotelId, ct);
-        rating = ratingCalculateService.GetShownRating(ratings);
+        rating = ratingCalculateService.GetShownRating(ratings.ToList());
 
         await cacheService.SetAsync(key, rating, ct);
         

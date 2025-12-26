@@ -25,7 +25,7 @@ public class PersonService(
 
     public async Task<bool> UpdateNameAsync(PersonUpdateEvent person, CancellationToken ct)
     {
-        return await personRepository.UpdateNameAsync(person.NewName, ct) ? true :
+        return await personRepository.UpdateNameAsync(person.PersonId, person.NewName, ct) ? true :
             throw new NotFoundException("Person Not Found");
     }
 
