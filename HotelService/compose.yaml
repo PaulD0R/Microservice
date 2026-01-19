@@ -1,0 +1,56 @@
+﻿services:
+  hotelservice.api:
+    image: hotelservice.api
+    build:
+      context: .
+      dockerfile: HotelService.API/Dockerfile
+    ports:
+      - 3000:8080
+    environment:
+      - ConnectionStrings__Postgres=Host=postgres;Port=5432;Database=micro_hotel;Username=pauldor;Password=asdfgh67
+
+      - ConnectionStrings__Redis=redis:6379,abortConnect=false
+
+      - Kafka__PersonCreated__BootstrapServers=kafka-broker:29092
+      - Kafka__PersonCreated__Topic=person-created
+      - Kafka__LikeEvent__GroupId=persons
+
+      - Kafka__PersonDeleted__BootstrapServers=kafka-broker:29092
+      - Kafka__PersonDeleted__Topic=person-deleted
+      - Kafka__LikeEvent__GroupId=persons
+
+      - Kafka__PersonUpdated__BootstrapServers=kafka-broker:29092
+      - Kafka__PersonUpdated__Topic=person-updated
+      - Kafka__LikeEvent__GroupId=persons
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - hotel_project
+      - kafka-docker-project_kafka-net
+        
+  postgres:
+    image: postgres:16.11
+    environment:
+      POSTGRES_DB: "micro_hotel"
+      POSTGRES_USER: "pauldor"
+      POSTGRES_PASSWORD: "asdfgh67"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./Databases/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U pauldor -d micro_hotel" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hotel_project
+
+volumes:
+  postgres_data:
+
+networks:
+  hotel_project:
+    external: true
+  kafka-docker-project_kafka-net:
+    external: true

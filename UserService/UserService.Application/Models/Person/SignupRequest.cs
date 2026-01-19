@@ -6,7 +6,7 @@ public record SignupRequest
 {
     [Required(ErrorMessage = "Некорректное имя")]
     [MinLength(3, ErrorMessage = "Некорректная длинна имени")]
-    public string? Name { get; set; }
+    public string? UserName { get; set; }
     [Required(ErrorMessage = "Некорректная почта")]
     [EmailAddress(ErrorMessage = "Некорректная почта")]
     public string? Email { get; set; }

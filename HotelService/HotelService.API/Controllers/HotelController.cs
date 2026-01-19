@@ -1,3 +1,5 @@
+using HotelService.Application.Helpers.FilterModels;
+using HotelService.Application.Helpers.SortModels;
 using HotelService.Application.Interfaces.Services;
 using HotelService.Application.Models.Hotels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +15,15 @@ public class HotelController(
     : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult> GetHotelComments(
+    public async Task<ActionResult> GetHotels(
         CancellationToken ct,
+        [FromQuery] HotelFilterModel hotelFilterModel,
+        [FromQuery] HotelSortModel hotelSortModel,
         [FromQuery] int pageNumber = 1, 
         [FromQuery] int pageSize = 20)
     {
-        return Ok(await hotelService.GetHotelsByPageAsync(pageNumber, pageSize, ct));
+        return Ok(await hotelService.
+            GetHotelsByPageAsync(pageNumber, pageSize, hotelFilterModel, hotelSortModel, ct));
     }
 
     [HttpGet("{hotelId:guid}")]
@@ -30,6 +35,7 @@ public class HotelController(
     [HttpPost]
     public async Task<IActionResult> AddHotel([FromBody] AddHotelRequest request, CancellationToken ct)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         await hotelService.AddHotelAsync(request, ct);
         return Created();
     }

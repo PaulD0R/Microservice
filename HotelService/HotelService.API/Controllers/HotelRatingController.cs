@@ -27,7 +27,8 @@ public class HotelRatingController(
     {
         var personId = User.GetId();
         if (personId == null) return Unauthorized();
-
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         await hotelRatingService.ChangeHotelRatingAsync(request, personId, hotelId, ct);
         return NoContent();
     }

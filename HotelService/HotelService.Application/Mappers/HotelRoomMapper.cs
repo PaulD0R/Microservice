@@ -12,7 +12,8 @@ public static class HotelRoomMapper
         {
             HotelId = addHotelRoomRequest.HotelId,
             NumberOfResidents =  addHotelRoomRequest.NumberOfResidents,
-            Description = addHotelRoomRequest.Description
+            Description = addHotelRoomRequest.Description,
+            Price = addHotelRoomRequest.Price
         };
     }
 
@@ -24,6 +25,7 @@ public static class HotelRoomMapper
                 hotelRoom.Id,
                 hotelRoom.HotelId,
                 hotelRoom.NumberOfResidents,
+                hotelRoom.Price,
                 roomPhoto);
         }
 
@@ -34,6 +36,7 @@ public static class HotelRoomMapper
                 hotelRoom.HotelId,
                 hotelRoom.NumberOfResidents,
                 hotelRoom.Description,
+                hotelRoom.Price,
                 roomPhotos);
         }
         

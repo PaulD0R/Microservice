@@ -1,3 +1,6 @@
+using HotelService.Application.Helpers.FilterModels;
+using HotelService.Application.Helpers.HelperExtensions;
+using HotelService.Application.Helpers.SortModels;
 using HotelService.Application.Interfaces.Repositories;
 using HotelService.Domain.Entities;
 using HotelService.Infrastructure.Core;
@@ -14,19 +17,25 @@ public class HotelRoomRepository(
         return await context.HotelRooms.ToListAsync(ct);
     }
 
-    public async Task<IEnumerable<HotelRoom>> GetByHotelIdAsync(Guid hotelId, CancellationToken ct)
+    public async Task<IEnumerable<HotelRoom>> GetByHotelIdAsync(
+        Guid hotelId, 
+        HotelRoomFilter hotelRoomFilter, 
+        HotelRoomSortModel hotelRoomSortModel,
+        CancellationToken ct)
     {
-        return await context.HotelRooms.Where(h => h.HotelId == hotelId).ToListAsync(ct);
+        return await context.HotelRooms.Where(h => h.HotelId == hotelId)
+            .Filter(hotelRoomFilter).Order(hotelRoomSortModel)
+            .ToListAsync(ct);
     }
 
     public async Task<HotelRoom?> GetByIdAsync(Guid hotelRoomId, CancellationToken ct)
     {
-        return await  context.HotelRooms.FirstOrDefaultAsync(h => h.HotelId == hotelRoomId, ct);
+        return await context.HotelRooms.FirstOrDefaultAsync(h => h.HotelId == hotelRoomId, ct);
     }
 
     public async Task<bool> AddAsync(HotelRoom hotelRoom, CancellationToken ct)
     {
-        await  context.HotelRooms.AddAsync(hotelRoom, ct);
+        await context.HotelRooms.AddAsync(hotelRoom, ct);
         var rows = await context.SaveChangesAsync(ct);
         
         return rows > 0;

@@ -6,4 +6,5 @@ public record HotelRoomDto(
     Guid Id,
     Guid HotelId,
     byte NumberOfResidents,
+    decimal Price,
     RoomPhotoDto Photo);

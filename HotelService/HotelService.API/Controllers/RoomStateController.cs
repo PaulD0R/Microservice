@@ -28,6 +28,7 @@ public class RoomStateController(
     {
         var personId = User.GetId();
         if (personId == null) return Unauthorized();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         
         await roomStateService.AddRoomStateAsync(roomState, roomId, hotelId, personId, ct);
         return Created();

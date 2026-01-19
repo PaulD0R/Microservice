@@ -26,6 +26,17 @@ public class PersonRepository(
         return await userManager.Users.ToListAsync();
     }
 
+    public async Task<bool> UpdateAsync(Person person)
+    {
+        var result =await context.Persons.Where(p => p.Id == person.Id)
+            .ExecuteUpdateAsync(setters =>
+                setters.SetProperty(p => p.UserName, n => person.UserName ?? n.UserName)
+                    .SetProperty(p => p.Email, e => person.Email ?? e.Email)
+                );
+
+        return result != 0;
+    }
+
     public async Task<bool> DeleteUserAsync(string id)
     {
         var person = await context.Persons.FirstOrDefaultAsync(x => x.Id == id);

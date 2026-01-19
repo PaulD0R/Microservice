@@ -1,3 +1,5 @@
+using HotelService.Application.Helpers.FilterModels;
+using HotelService.Application.Helpers.SortModels;
 using HotelService.Application.Interfaces.Helpers;
 using HotelService.Application.Interfaces.Repositories;
 using HotelService.Application.Interfaces.Services;
@@ -14,13 +16,17 @@ public class HotelRoomService(
     IUnitOfWork unitOfWork)
     : IHotelRoomService
 {
-    public async Task<IEnumerable<HotelRoomDto>> GetHotelRoomsByHotelIdAsync(Guid hotelId, CancellationToken ct)
+    public async Task<IEnumerable<HotelRoomDto>> GetHotelRoomsByHotelIdAsync(
+        Guid hotelId,
+        HotelRoomFilter hotelRoomFilter, 
+        HotelRoomSortModel hotelRoomSortModel,
+        CancellationToken ct)
     {
-        var rooms = await hotelRoomRepository.GetByHotelIdAsync(hotelId, ct);
+        var rooms = await hotelRoomRepository
+            .GetByHotelIdAsync(hotelId, hotelRoomFilter, hotelRoomSortModel, ct);
         var roomTasks = rooms.Select(async r =>
         {
             var photo = await roomPhotoService.GetFirstRoomPhotoByRoomIdAsync(r.Id, ct);
-            
             return r.ToHotelRoomDto(photo);
         });
         

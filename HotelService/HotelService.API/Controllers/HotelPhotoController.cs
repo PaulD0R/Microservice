@@ -30,6 +30,7 @@ public class HotelPhotoController(
         [FromRoute] Guid hotelId,
         CancellationToken ct)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         await hotelPhotoService.AddHotelPhotoAsync(request, hotelId, ct);
         return Created();
     }

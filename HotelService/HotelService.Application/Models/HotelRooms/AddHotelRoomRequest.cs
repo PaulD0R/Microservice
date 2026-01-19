@@ -5,4 +5,5 @@ namespace HotelService.Application.Models.HotelRooms;
 public record AddHotelRoomRequest(
     [Required] Guid HotelId,
     [Required] byte NumberOfResidents,
-    [Required] string Description);
+    [Required] string Description,
+    [Required] decimal Price);

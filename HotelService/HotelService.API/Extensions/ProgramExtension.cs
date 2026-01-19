@@ -61,7 +61,7 @@ public static class ProgramExtension
         private void AddConsumer<TMessage, THandler>(IConfigurationSection configuration)
         where THandler : class, IMessageHandler<TMessage>
         {
-            service.Configure<KafkaOptions>(configuration);
+            service.Configure<KafkaOptions>(typeof(TMessage).Name, configuration);
             service.AddHostedService<KafkaConsumer<TMessage>>();
             service.AddSingleton<IMessageHandler<TMessage>, THandler>();
         }
@@ -70,10 +70,10 @@ public static class ProgramExtension
         {
             service.AddConsumer<PersonCreateEvent, PersonCreateEventHandlers>
                 (configuration.GetSection("Kafka:PersonCreated"));
-            // service.AddConsumer<PersonUpdateEvent, PersonUpdateEventHandlers>
-            //     (configuration.GetSection("Kafka:PersonUpdated"));
-            // service.AddConsumer<PersonDeleteEvent, PersonDeleteEventHandlers>
-            //     (configuration.GetSection("Kafka:PersonDeleted"));
+            service.AddConsumer<PersonUpdateEvent, PersonUpdateEventHandlers>
+                (configuration.GetSection("Kafka:PersonUpdated"));
+            service.AddConsumer<PersonDeleteEvent, PersonDeleteEventHandlers>
+                (configuration.GetSection("Kafka:PersonDeleted"));
         }
 
         public void AddExceptionHandlers()

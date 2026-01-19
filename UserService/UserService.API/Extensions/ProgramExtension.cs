@@ -33,7 +33,7 @@ public static class ProgramExtension
         
         public void AddProducer<TMessage>(IConfigurationSection configuration)
         {
-            service.Configure<KafkaProducerSettings>(configuration);
+            service.Configure<KafkaProducerSettings>(typeof(TMessage).Name, configuration);
             service.AddSingleton<IMessageProducer<TMessage>, KafkaMessageProducer<TMessage>>();
         }
 
@@ -49,7 +49,7 @@ public static class ProgramExtension
         public void AddDataBasses(IConfiguration configuration)
         {   
             service.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("Psql")));
+                options.UseNpgsql(configuration.GetConnectionString("Postgres")));
             
             service.AddStackExchangeRedisCache(options =>
             {

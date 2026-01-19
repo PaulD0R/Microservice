@@ -6,7 +6,7 @@ namespace UserService.Infrastructure.Caching;
 
 public class HashCachingService(IDatabase dataBase) :  IHashCachingService
 {
-    private const int CACHE_TIME = 15;
+    private const int CacheTime = 15;
     
     public async Task SetAsync<T>(string key, T value)
     {
@@ -18,7 +18,7 @@ public class HashCachingService(IDatabase dataBase) :  IHashCachingService
 
         await dataBase.HashSetAsync(key, dict.Select(x =>
             new HashEntry(x.Key, x.Value)).ToArray());
-        await dataBase.KeyExpireAsync(key, TimeSpan.FromMinutes(CACHE_TIME));
+        await dataBase.KeyExpireAsync(key, TimeSpan.FromMinutes(CacheTime));
     }
 
     public async Task SetFieldAsync<T>(string key, string field, T? value)

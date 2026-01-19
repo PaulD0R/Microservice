@@ -7,4 +7,5 @@ public record HotelRoomFullDto(
     Guid HotelId,
     byte NumberOfResidents,
     string Description,
+    decimal Price,
     IEnumerable<RoomPhotoDto> Photos);

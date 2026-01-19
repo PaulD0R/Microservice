@@ -14,22 +14,23 @@ public class KafkaConsumer<TMessage> : BackgroundService
     private ILogger<KafkaConsumer<TMessage>> _logger;
 
     public KafkaConsumer(
-        IOptions<KafkaOptions> kafkaOptions, 
+        IOptionsMonitor<KafkaOptions> optionsMonitor, 
         IMessageHandler<TMessage> handler,  
         ILogger<KafkaConsumer<TMessage>> logger)
     {
         _logger = logger;
         _handler = handler;
         
+        var options = optionsMonitor.Get(typeof(TMessage).Name);
         var config = new ConsumerConfig
         {
-            BootstrapServers = kafkaOptions.Value.BootstrapServers,
-            GroupId = kafkaOptions.Value.GroupId,
+            BootstrapServers = options.BootstrapServers,
+            GroupId = options.GroupId,
             AutoOffsetReset = AutoOffsetReset.Earliest,
         };
         _consumer = new ConsumerBuilder<string, TMessage>(config)
             .SetValueDeserializer(new KafkaDeserializer<TMessage>()).Build();
-        _consumer.Subscribe(kafkaOptions.Value.Topic);
+        _consumer.Subscribe(options.Topic);
     }
     
     protected override Task ExecuteAsync(CancellationToken stoppingToken)

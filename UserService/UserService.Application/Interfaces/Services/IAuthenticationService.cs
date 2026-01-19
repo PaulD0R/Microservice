@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using UserService.Application.Models.Person;
 using UserService.Application.Models.Token;
 

@@ -27,6 +27,7 @@ public class HotelCommentController(
     {
         var personId = User.GetId();
         if (personId == null) return Unauthorized();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         
         await hotelCommentService.AddHotelCommentAsync(request, personId, hotelId, ct);
         return Created();

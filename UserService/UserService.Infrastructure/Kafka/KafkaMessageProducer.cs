@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using UserService.Application.Interfaces.Messages;
 
@@ -8,18 +9,22 @@ public class KafkaMessageProducer<TMessage> : IMessageProducer<TMessage>
 {
     private readonly IProducer<string, TMessage> _producer;
     private readonly string _topic;
+    private readonly ILogger<KafkaMessageProducer<TMessage>> _logger;
 
-    public KafkaMessageProducer(IOptions<KafkaProducerSettings> options)
+    public KafkaMessageProducer(IOptionsMonitor<KafkaProducerSettings> optionsMonitor, ILogger<KafkaMessageProducer<TMessage>> logger)
     {
+        _logger = logger;
+        
+        var options = optionsMonitor.Get(typeof(TMessage).Name);
         var config = new ProducerConfig
         {
-            BootstrapServers = options.Value.BootstrapServers
+            BootstrapServers = options.BootstrapServers
         };
         
         _producer = new ProducerBuilder<string, TMessage>(config)
             .SetValueSerializer(new KafkaJsonSerializer<TMessage>()).Build();
 
-        _topic = options.Value.Topic;
+        _topic = options.Topic;
     }
     
     public async Task ProduceAsync(TMessage message, CancellationToken cancellationToken)
@@ -28,7 +33,8 @@ public class KafkaMessageProducer<TMessage> : IMessageProducer<TMessage>
         {
             Key = "uniq1",
             Value = message
-        },  cancellationToken); 
+        },  cancellationToken);
+        _logger.LogInformation($"Message: {message} in topic: {_topic}");
     }
 
     public void Dispose()

@@ -8,4 +8,5 @@ public record HotelDto(
     string Country,
     string City,
     byte Stars,
+    decimal MinPrice,
     HotelPhotoDto Photo);

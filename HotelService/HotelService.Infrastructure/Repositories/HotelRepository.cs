@@ -1,3 +1,6 @@
+using HotelService.Application.Helpers.FilterModels;
+using HotelService.Application.Helpers.HelperExtensions;
+using HotelService.Application.Helpers.SortModels;
 using HotelService.Application.Interfaces.Repositories;
 using HotelService.Domain.Entities;
 using HotelService.Infrastructure.Core;
@@ -14,9 +17,16 @@ public class HotelRepository(
         return await context.Hotels.ToListAsync(ct);
     }
 
-    public async Task<IEnumerable<Hotel>> GetByPageAsync(int pageNumber, int pageSize, CancellationToken ct)
+    public async Task<IEnumerable<Hotel>> GetByPageAsync(
+        int pageNumber,
+        int pageSize,
+        HotelFilterModel hotelFilterModel,
+        HotelSortModel hotelSortModel,
+        CancellationToken ct)
     {
-        return await context.Hotels.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(ct);
+        return await context.Hotels.Filter(hotelFilterModel).Order(hotelSortModel)
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .ToListAsync(ct);
     }
 
     public async Task<Hotel?> GetByIdAsync(Guid hotelId, CancellationToken ct)

@@ -16,19 +16,22 @@ public class AuthenticationController(
 {
     [HttpPost("signin")]
     public async Task<IActionResult> Signin([FromBody] SigninRequest signinRequest)
-    {
+    {   
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         return Ok(await authenticationService.SigninAsync(signinRequest));
     }
 
     [HttpPost("signup")]
     public async Task<IActionResult> Signup([FromBody] SignupRequest newPersonRequest)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         return Ok(await authenticationService.SignupAsync(newPersonRequest));
     }
 
     [HttpPost("refreshToken")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         return Ok(await tokenService.RefreshTokenAsync(request));
     }
 

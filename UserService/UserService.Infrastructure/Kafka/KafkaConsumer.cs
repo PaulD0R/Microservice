@@ -1,5 +1,6 @@
 using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using UserService.Application.Interfaces.Messages;
 
@@ -10,9 +11,15 @@ public class KafkaConsumer<TMessage> : BackgroundService
     private readonly string _topic;
     private readonly IConsumer<string, TMessage> _consumer;
     private readonly IMessageHandler<TMessage> _handler;
+    private readonly ILogger<KafkaConsumer<TMessage>> _logger;
     
-    public KafkaConsumer(IOptions<KafkaConsumerSettings> options, IMessageHandler<TMessage> handler)
+    public KafkaConsumer(
+        IOptions<KafkaConsumerSettings> options, 
+        IMessageHandler<TMessage> handler, 
+        ILogger<KafkaConsumer<TMessage>> logger)
     {
+        _logger = logger;
+        
         var config = new ConsumerConfig
         {
             BootstrapServers = options.Value.BootstrapServers,
@@ -38,7 +45,7 @@ public class KafkaConsumer<TMessage> : BackgroundService
         }
         catch
         {
-            //
+            _logger.LogError("Consume error");
         }
     }
     

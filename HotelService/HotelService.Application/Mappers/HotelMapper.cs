@@ -13,6 +13,9 @@ public static class HotelMapper
             Name = addHotelRequest.Name,
             Country = addHotelRequest.Country,
             City = addHotelRequest.City,
+            FullAddress = addHotelRequest.FullAddress,
+            Latitude = addHotelRequest.Latitude,
+            Longitude = addHotelRequest.Longitude,
             Stars = addHotelRequest.Stars,
             Description = addHotelRequest.Description
         };
@@ -28,6 +31,7 @@ public static class HotelMapper
                 hotel.Country,
                 hotel.City,
                 hotel.Stars,
+                hotel.MinPrice,
                 photo);
         }
 
@@ -38,6 +42,9 @@ public static class HotelMapper
                 hotel.Name,
                 hotel.Country,
                 hotel.City,
+                hotel.FullAddress,
+                hotel.Latitude,
+                hotel.Longitude,
                 hotel.Stars,
                 hotel.Description,
                 hotel.ShownRating,

@@ -26,11 +26,11 @@ public class AuthenticationService(
 {
     public async Task<TokensDto> SigninAsync(SigninRequest signinRequest)
     {
-        var person = await personRepository.GetByNameAsync(signinRequest.Name!);
+        var person = await personRepository.GetByNameAsync(signinRequest.UserName!);
         if (person == null) throw new BadRequestException("Person with this name not found");
         
         var result = await signInManager.CheckPasswordSignInAsync(person, signinRequest.Password!, false);
-        if (!result.Succeeded) throw new Exception("Incorrect password");
+        if (!result.Succeeded) throw new BadRequestException("Incorrect password");
 
         var token = await jwtRepository.CreateJwtAsync(person);
         var refreshToken = await refreshTokenRepository.CreateNewRefreshTokenAsync(person);
@@ -52,7 +52,7 @@ public class AuthenticationService(
 
         if (!createPerson.Succeeded)
             throw new UsernameAlreadyExistsException(person.UserName!);
-        logger.LogInformation($"Person {person.UserName} registered successfully");    
+        logger.LogInformation("Person {PersonUserName} registered successfully", person.UserName);    
         
         var roleResult = await userManager.AddToRoleAsync(person, "User");
         if (!roleResult.Succeeded)

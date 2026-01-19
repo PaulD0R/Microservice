@@ -1,5 +1,4 @@
 using UserService.API.Extensions;
-using UserService.Application.Models.Person;
 using UserService.Domain.Events;
 using UserService.Infrastructure.Handlers;
 
@@ -13,6 +12,8 @@ builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddFactories();
 builder.Services.AddProducer<PersonCreateEvent>(builder.Configuration.GetRequiredSection("Kafka:PersonCreated"));
+builder.Services.AddProducer<PersonDeleteEvent>(builder.Configuration.GetRequiredSection("Kafka:PersonDeleted"));
+builder.Services.AddProducer<PersonUpdateEvent>(builder.Configuration.GetRequiredSection("Kafka:PersonUpdated"));
 builder.Services.AddConsumer<LikeEvent, LikeHandler>(builder.Configuration.GetRequiredSection("Kafka:LikeEvent"));
 builder.Services.AddPersonCors();
 builder.Services.AddResponseCompression();

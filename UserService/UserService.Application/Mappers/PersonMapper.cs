@@ -9,8 +9,18 @@ public static class PersonMapper
         public static Person ToPerson(this SignupRequest signupRequest)
         {
             return new Person {
-                UserName = signupRequest.Name,
+                UserName = signupRequest.UserName,
                 Email = signupRequest.Email,
+            };
+        }
+
+        public static Person ToPerson(this UpdatePersonRequest updatePersonRequest, string id)
+        {
+            return new Person
+            {
+                Id = id,
+                UserName = updatePersonRequest.UserName,
+                Email = updatePersonRequest.Email
             };
         }
 
@@ -21,7 +31,7 @@ public static class PersonMapper
                 return new PersonDto
                 {
                     Id = person.Id,
-                    Name = person.UserName ??  string.Empty
+                    UserName = person.UserName ??  string.Empty
                 };
             }
 
@@ -30,7 +40,7 @@ public static class PersonMapper
                 return new PrivatePersonDto
                 {
                     Id = person.Id,
-                    Name = person.UserName ??  string.Empty,
+                    UserName = person.UserName ??  string.Empty,
                     Email = person.Email ??  string.Empty
                 };
             }

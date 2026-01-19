@@ -1,3 +1,5 @@
+using HotelService.Application.Helpers.FilterModels;
+using HotelService.Application.Helpers.SortModels;
 using HotelService.Application.Interfaces.Helpers;
 using HotelService.Application.Interfaces.Repositories;
 using HotelService.Application.Interfaces.Services;
@@ -16,9 +18,15 @@ public class HotelService(
     IUnitOfWork unitOfWork)
     : IHotelService
 {
-    public async Task<IEnumerable<HotelDto>> GetHotelsByPageAsync(int pageNumber, int pageSize, CancellationToken ct)
+    public async Task<IEnumerable<HotelDto>> GetHotelsByPageAsync(
+        int pageNumber, 
+        int pageSize,
+        HotelFilterModel hotelFilterModel,
+        HotelSortModel hotelSortModel,
+        CancellationToken ct)
     {
-        var hotels = await hotelRepository.GetByPageAsync(pageNumber, pageSize, ct);
+        var hotels = await hotelRepository
+            .GetByPageAsync(pageNumber, pageSize, hotelFilterModel, hotelSortModel, ct);
         var hotelTasks =  hotels.Select(async h =>
         {
             var photo = await hotelPhotoService.GetFirstHotelPhotoByHotelIdAsync(h.Id, ct);
