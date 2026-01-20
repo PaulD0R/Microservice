@@ -8,7 +8,7 @@ using UserService.Application.Models.Token;
 namespace UserService.API.Controllers;
 
 [ApiController]
-[Route("user-service/authentication")]
+[Route("authentication")]
 public class AuthenticationController(
     IAuthenticationService authenticationService,
     ITokenService tokenService)

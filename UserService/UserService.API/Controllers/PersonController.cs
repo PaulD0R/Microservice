@@ -8,7 +8,7 @@ namespace UserService.API.Controllers;
 
 [ApiController]
     [Authorize]
-    [Route("user-service/persons")]
+    [Route("persons")]
     public class PersonController(IPersonService  personService) : ControllerBase
     {
         [HttpGet("Id/{id}")]

@@ -8,7 +8,7 @@ namespace HotelService.API.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("hotel-service/hotels")]
+[Route("hotels")]
 public class RoomStateController(
     IRoomStateService roomStateService)
     : ControllerBase

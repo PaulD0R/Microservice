@@ -8,7 +8,7 @@ namespace HotelService.API.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("hotel-service/hotels/{hotelId:guid}ratings")]
+[Route("hotels/{hotelId:guid}ratings")]
 public class HotelRatingController(
     IHotelRatingService hotelRatingService)
     : ControllerBase
