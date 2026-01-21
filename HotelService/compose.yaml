@@ -4,8 +4,6 @@
     build:
       context: .
       dockerfile: HotelService.API/Dockerfile
-    ports:
-      - 3000:8080
     environment:
       - ConnectionStrings__Postgres=Host=postgres;Port=5432;Database=micro_hotel;Username=pauldor;Password=asdfgh67
 
@@ -43,8 +41,6 @@
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - hotel_project
 
 volumes:
   postgres_data:
